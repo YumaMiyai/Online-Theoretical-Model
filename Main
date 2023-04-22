@@ -95,10 +95,7 @@ def log_data(acrylate_flowrate, fluoro_flowrate, cyclo_flowrate, reactor_1_tempe
 
 
 def step_1():
-    """
-    Manually turn on hot plate to 150 degrees Celsius
-    :return: None
-    """
+
     valve.open = DIVERT_TO_WASTE
 
 
@@ -204,7 +201,7 @@ def step_6():
 
 def main(filename: str):
     global log_file
-    # log_file = open('C:\\Users\\Mettler\\Desktop\\PythonOrchestration\\InstrumentData.csv', 'a+')
+   
     log_file = open(filename, 'a+')
     log_file.write(
         'Timestamp,'
