@@ -50,17 +50,7 @@ reactor1 = CFDModel(1200, 1000, nx= 500, Volume=10e-6, dt=0.005)
 reactor2 = CFDModel(1, 1250, nx=400, Volume=5e-6 + 3.36e-6, dt=0.005, ArrheniusFactor=11.3, ActivationEnergy=23681, MolecularWeight=346.0)
 
 start_time = None
-'''
-The issue is reading the JKEM data, or the data from the flow meters
-huh
-yeah
-they are running 
-ok let me see...
-Can I start it?
-yeah
-JKEM data is bad
 
-'''
 log_file = None
 
 
