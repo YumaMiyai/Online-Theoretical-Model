@@ -1,19 +1,8 @@
 import time
-# from datetime import datetime
 import numpy as np
-# import matplotlib
-# from matplotlib import pyplot as plt
-# import pandas as pd
 from numpy import genfromtxt, ndarray
-# from pathlib import Path
-# from datetime import datetime as date
 import math
 import random
-# import ruptures as rpt
-# import warnings
-# from raspberry_pi import Server
-
-# rpi = Server("10.1.10.104", 55000)
 
 """
 Constants
@@ -65,14 +54,11 @@ class CFDModel:
         self.reltol = kwargs['ConvergenceTolerance'] if 'ConvergenceTolerance' in kwargs else 1e-8  # tolerance for convergence
         self.lam = self.a * self.dt1 / self.dx1 ** 2  # heat transfer coefficient
         self.dHr = kwargs['HeatOfReaction'] if 'HeatOfReaction' in kwargs else 0
-        # dHr = -553000 #heat of reaction, J/mol
         self.molecular_weight = kwargs['MolecularWeight'] if 'MolecularWeight' in kwargs else 334.17
 
         self.sample_steps = kwargs['SampleSteps'] if 'SampleSteps' in kwargs else 1000
 
-        # self.Ea1 = kwargs['ActivationEnergy'] if 'ActivationEnergy' in kwargs else 53106.5  # activation energy (J/mol)
         self.Ea1 = kwargs['ActivationEnergy'] if 'ActivationEnergy' in kwargs else 51080  # activation energy (J/mol)
-        # self.k01 = kwargs['ArrheniusFactor'] if 'ArrheniusFactor' in kwargs else 1175.26  # arrhenius factor (m3/mol/s)
         self.k01 = kwargs['ArrheniusFactor'] if 'ArrheniusFactor' in kwargs else 923.8  # arrhenius factor (m3/mol/s)
 
         self._species_A_flowrate = 0.0
@@ -260,20 +246,14 @@ class CFDModel:
         else:
             num_steps = dt / self.dt1
 
-        # print(f'Number of steps for this simulation: {num_steps}')
-
-        # self.reset_arrays()
         stepcount = 0
-        # termcond = self._tolerance_check()
-        # while termcond >= reltol:
+
         while stepcount < num_steps:
-            # if stepcount > 10:
-            #     # termcond = self._tolerance_check()
+
             self._T[0] = self.T0  # impose dirichlet BC
             self._T[self.nx1 - 1] = self._T[self.nx1 - 2]  # impose neumann BC
             self._Tn = self._T.copy()  # update temporary array
 
-            # next line is vectorized FDM spatial solution
             self._T[1:-1] = self._Tn[1:-1] - (
                         self.stream_velocity * (self.dt1 / self.dx1) * (self._Tn[1:-1] - self._Tn[:-2])) \
                             + self.lam * (self._Tn[2:] - 2 * self._Tn[1:-1] + self._Tn[:-2]) \
@@ -312,13 +292,9 @@ if __name__ == '__main__':
         try:
             t = 0
             while True:
-                # Set the appropriate variables to the latest values
                 reactor_1.set_temperature_in_degrees_celsius(150.0)
                 reactor_2.set_temperature_in_degrees_celsius(150.0)
-                # reactor_1.set_acrylate_flowrate_in_microliters_per_second(2.5 * 1.667*10**-8)
-                # reactor_1.set_fluoro_flowrate_in_microliters_per_second(2.5 * 1.667*10**-8)
 
-                # start_time = time.time()
                 if t > 200000:
                     reactor_1.species_A_flowrate = 1.7 * 1.66667e-8
                 else:
@@ -327,7 +303,7 @@ if __name__ == '__main__':
                     reactor_1.species_B_flowrate = 1.7 * 1.66667e-8
                 else:
                     reactor_1.species_B_flowrate = 2.5 * 1.66667e-8
-                # Update the reactor_1 (calculate new concentrations)
+    
                 reactor_1.update()
 
                 reactor_2.species_A_flowrate = reactor_1.species_A_flowrate + reactor_1.species_B_flowrate
@@ -335,16 +311,11 @@ if __name__ == '__main__':
                 reactor_2.species_A_stock_concentration = reactor_1.default_product_concentration
                 reactor_2.update()
 
-                # end_time = time.time()
-
-                # print(f'The predicted product output concentration is {reactor_1.product_concentration} at t={t}; Simulation took {end_time-start_time} seconds')
                 t = time.time() - start_time
                 print(f'The predicted product output concentration at {t} seconds is:\n'
                       f'\tReactor 1: {reactor_1.product_concentration:0.4}\tReactor 2: {reactor_2.product_concentration:0.4}')
                 output_file.write(f'{t},{reactor_1.product_concentration},{reactor_2.product_concentration}\n')
                 output_file.flush()
-
-                # t += sample_steps * dt1
 
                 time.sleep(2 + random.random())  # pauses reactor_1 loop before refreshing and updating next solution
         except KeyboardInterrupt:
